@@ -167,6 +167,12 @@ export default class Slider extends PureComponent {
      * Used to configure the animation parameters.  These are the same parameters in the Animated library.
      */
     animationConfig: PropTypes.object,
+    
+    
+    /**
+      * Allow the value to be set at a specific position when the track is pressed
+      */
+    trackPressable : PropTypes.bool,
   };
 
   static defaultProps = {
@@ -180,6 +186,7 @@ export default class Slider extends PureComponent {
     thumbTouchSize: { width: 40, height: 40 },
     debugTouchArea: false,
     animationType: 'timing',
+    trackPressable: false,
   };
 
   state = {
@@ -322,6 +329,7 @@ export default class Slider extends PureComponent {
       style,
       trackStyle,
       thumbStyle,
+      trackPressable,
       ...otherProps
     } = props;
 
@@ -332,7 +340,7 @@ export default class Slider extends PureComponent {
     e: Object /* gestureState: Object */,
   ): boolean =>
     // Should we become active when the user presses down on the thumb?
-    this._thumbHitTest(e);
+    this.props.trackPressable || this._thumbHitTest(e);
 
   _handleMoveShouldSetPanResponder(/* e: Object, gestureState: Object */): boolean {
     // Should we become active when the user moves a touch over the thumb?
