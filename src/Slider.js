@@ -202,8 +202,8 @@ export default class Slider extends PureComponent {
       onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
       onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
       onPanResponderGrant: this._handlePanResponderGrant,
-      onPanResponderMove: this._handlePanResponderMove,
-      onPanResponderRelease: this._handlePanResponderEnd,
+      onPanResponderMove: (e, gestureState) => this._handlePanResponderEvent(e, gestureState, 'onValueChange'),
+      onPanResponderRelease: (e, gestureState) => this._handlePanResponderEvent(e, gestureState, 'onSlidingComplete'),
       onPanResponderTerminationRequest: this._handlePanResponderRequestEnd,
       onPanResponderTerminate: this._handlePanResponderEnd,
     });
@@ -352,7 +352,7 @@ export default class Slider extends PureComponent {
     this._fireChangeEvent('onSlidingStart');
   };
 
-  _handlePanResponderMove = (e: Object, gestureState: Object) => {
+  _handlePanResponderEvent = (e: Object, gestureState: Object, changeEvent: string) => {
     var value = this._getValue(gestureState)
     
     if (this.props.disabled) {
