@@ -167,10 +167,6 @@ export default class Slider extends PureComponent {
      * Used to configure the animation parameters.  These are the same parameters in the Animated library.
      */
     animationConfig: PropTypes.object,
-    /**
-      * Allow the value to be set at a specific position when the track is pressed
-      */
-    trackPressable : PropTypes.bool,
   };
 
   static defaultProps = {
@@ -184,7 +180,6 @@ export default class Slider extends PureComponent {
     thumbTouchSize: { width: 40, height: 40 },
     debugTouchArea: false,
     animationType: 'timing',
-    trackPressable: false,
   };
 
   state = {
@@ -200,8 +195,8 @@ export default class Slider extends PureComponent {
       onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
       onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
       onPanResponderGrant: this._handlePanResponderGrant,
-      onPanResponderMove: (e, gestureState) => this._handlePanResponderEvent(e, gestureState, 'onValueChange'),
-      onPanResponderRelease: (e, gestureState) => this._handlePanResponderEvent(e, gestureState, 'onSlidingComplete'),
+      onPanResponderMove: this._handlePanResponderMove,
+      onPanResponderRelease: this._handlePanResponderEnd,
       onPanResponderTerminationRequest: this._handlePanResponderRequestEnd,
       onPanResponderTerminate: this._handlePanResponderEnd,
     });
@@ -327,7 +322,6 @@ export default class Slider extends PureComponent {
       style,
       trackStyle,
       thumbStyle,
-      trackPressable,
       ...otherProps
     } = props;
 
@@ -338,33 +332,25 @@ export default class Slider extends PureComponent {
     e: Object /* gestureState: Object */,
   ): boolean =>
     // Should we become active when the user presses down on the thumb?
-    this.props.trackPressable || this._thumbHitTest(e);
+    this._thumbHitTest(e);
 
   _handleMoveShouldSetPanResponder(/* e: Object, gestureState: Object */): boolean {
     // Should we become active when the user moves a touch over the thumb?
     return false;
   }
 
-   _handlePanResponderGrant = (e: Object/*, gestureState: Object */) => {
-    this._previousLeft = this.props.trackPressable ? e.nativeEvent.locationX - (this.props.thumbTouchSize.width/2) : this._getThumbLeft(this._getCurrentValue());
+  _handlePanResponderGrant = (/* e: Object, gestureState: Object */) => {
+    this._previousLeft = this._getThumbLeft(this._getCurrentValue());
+    this._fireChangeEvent('onSlidingStart');
   };
 
-  _handlePanResponderEvent = (e: Object, gestureState: Object, changeEvent: string) => {
-    var value = this._getValue(gestureState)
+  _handlePanResponderMove = (e: Object, gestureState: Object) => {
     if (this.props.disabled) {
       return;
     }
 
-    if(value < this.props.minimumSlideValue){
-        this._setCurrentValue(this.props.minimumSlideValue);
-    } else if (value > this.props.maximumSlideValue){
-        this._setCurrentValue(this.props.maximumSlideValue);
-    } else {
-      this._setCurrentValue(value);
-    }
-
-    this._fireChangeEvent(changeEvent);
-
+    this._setCurrentValue(this._getValue(gestureState));
+    this._fireChangeEvent('onValueChange');
   };
 
   _handlePanResponderRequestEnd(e: Object, gestureState: Object) {
