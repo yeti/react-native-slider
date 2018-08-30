@@ -353,6 +353,8 @@ export default class Slider extends PureComponent {
   };
 
   _handlePanResponderMove = (e: Object, gestureState: Object) => {
+    var value = this._getValue(gestureState)
+    
     if (this.props.disabled) {
       return;
     }
