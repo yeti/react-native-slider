@@ -339,8 +339,8 @@ export default class Slider extends PureComponent {
     return false;
   }
 
-  _handlePanResponderGrant = (/* e: Object, gestureState: Object */) => {
-    this._previousLeft = this._getThumbLeft(this._getCurrentValue());
+   _handlePanResponderGrant = (e: Object, gestureState: Object) => {
+    this._previousLeft = this.props.trackPressable ? e.nativeEvent.locationX - (this.props.thumbTouchSize.width/2) : this._getThumbLeft(this._getCurrentValue());
     this._fireChangeEvent('onSlidingStart');
   };
 
@@ -349,8 +349,15 @@ export default class Slider extends PureComponent {
       return;
     }
 
-    this._setCurrentValue(this._getValue(gestureState));
-    this._fireChangeEvent('onValueChange');
+    if(value < this.props.minimumSlideValue){
+        this._setCurrentValue(this.props.minimumSlideValue);
+    } else if (value > this.props.maximumSlideValue){
+        this._setCurrentValue(this.props.maximumSlideValue);
+    } else {
+      this._setCurrentValue(value);
+    }
+
+    this._fireChangeEvent(changeEvent);
   };
 
   _handlePanResponderRequestEnd(e: Object, gestureState: Object) {
