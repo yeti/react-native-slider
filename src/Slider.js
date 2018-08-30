@@ -345,7 +345,7 @@ export default class Slider extends PureComponent {
     return false;
   }
 
-   _handlePanResponderGrant = (e: Object/*, gestureState: Object */) => {
+   _handlePanResponderGrant = (e: Object, gestureState: Object) => {
     this._previousLeft = this.props.trackPressable ? e.nativeEvent.locationX - (this.props.thumbTouchSize.width/2) : this._getThumbLeft(this._getCurrentValue());
   };
 
@@ -364,7 +364,6 @@ export default class Slider extends PureComponent {
     }
 
     this._fireChangeEvent(changeEvent);
-
   };
 
   _handlePanResponderRequestEnd(e: Object, gestureState: Object) {
