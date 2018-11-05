@@ -316,6 +316,7 @@ export default class Slider extends PureComponent {
           {debugTouchArea === true &&
             this._renderDebugThumbTouchRect(minimumTrackWidth)}
         </View>
+       {this.props.children}
       </View>
     );
   }
@@ -332,7 +333,7 @@ export default class Slider extends PureComponent {
       trackPressable,
       ...otherProps
     } = props;
-
+    
     return otherProps;
   }
 
